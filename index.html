@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#003b71" />
+  <title>Energy Call Checklist</title>
+  <style>
+    :root{
+      --blue:#003b71;
+      --blue-2:#0a4d86;
+      --orange:#f28c00;
+      --white:#ffffff;
+      --ink:#102030;
+      --muted:#6f7b86;
+      --line:#dbe3ea;
+      --done:#dfeee5;
+      --done-text:#346447;
+      --bg:#f4f7fa;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      min-height:100%;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    }
+    body{
+      min-height:100svh;
+      display:flex;
+      align-items:stretch;
+      justify-content:center;
+    }
+    .app{
+      width:100%;
+      min-height:100svh;
+      background:var(--white);
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+    }
+    header{
+      background:var(--blue);
+      color:var(--white);
+      padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .title{
+      font-size:clamp(18px,5vw,24px);
+      line-height:1;
+      font-weight:800;
+      letter-spacing:.01em;
+    }
+    .subtitle{
+      margin-top:4px;
+      font-size:12px;
+      opacity:.82;
+    }
+    .progress{
+      flex:0 0 auto;
+      min-width:68px;
+      text-align:center;
+      padding:7px 9px;
+      border-radius:12px;
+      background:rgba(255,255,255,.12);
+      font-weight:800;
+      font-size:14px;
+    }
+    main{
+      padding:10px;
+      overflow:hidden;
+    }
+    .grid{
+      height:100%;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      align-content:start;
+    }
+    section{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:8px;
+      background:#fff;
+    }
+    section h2{
+      margin:0 0 5px;
+      color:var(--orange);
+      font-size:12px;
+      line-height:1;
+      letter-spacing:.08em;
+      font-weight:900;
+    }
+    .item{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      min-height:31px;
+      padding:4px 5px;
+      border-radius:9px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      transition:background .12s ease,color .12s ease;
+    }
+    .item + .item{margin-top:1px}
+    .item input{
+      appearance:none;
+      -webkit-appearance:none;
+      margin:0;
+      width:21px;
+      height:21px;
+      flex:0 0 21px;
+      border:2px solid var(--blue-2);
+      border-radius:6px;
+      background:#fff;
+      display:grid;
+      place-content:center;
+    }
+    .item input::before{
+      content:"";
+      width:9px;
+      height:5px;
+      border-left:3px solid #fff;
+      border-bottom:3px solid #fff;
+      transform:rotate(-45deg) scale(0);
+      transition:transform .1s ease;
+      margin-top:-2px;
+    }
+    .item input:checked{
+      background:var(--blue);
+      border-color:var(--blue);
+    }
+    .item input:checked::before{transform:rotate(-45deg) scale(1)}
+    .item.done{
+      background:var(--done);
+      color:var(--done-text);
+    }
+    .item span{
+      font-size:clamp(13px,3.65vw,16px);
+      line-height:1.12;
+      font-weight:650;
+    }
+    footer{
+      padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+      display:flex;
+      gap:8px;
+      border-top:1px solid var(--line);
+      background:#fff;
+    }
+    button{
+      border:0;
+      border-radius:12px;
+      padding:11px 14px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .reset{
+      flex:1;
+      background:var(--blue);
+      color:#fff;
+    }
+    .clear-done{
+      background:#e9eef3;
+      color:var(--ink);
+    }
+    @media (min-width:700px){
+      .app{max-width:520px; box-shadow:0 16px 50px rgba(0,0,0,.12)}
+      main{padding:12px}
+      .grid{gap:10px}
+      section{padding:10px}
+    }
+    @media (max-height:720px){
+      header{padding-top:calc(7px + env(safe-area-inset-top));padding-bottom:7px}
+      .subtitle{display:none}
+      main{padding:7px}
+      .grid{gap:6px}
+      section{padding:6px}
+      .item{min-height:27px;padding:3px 4px}
+      .item input{width:19px;height:19px;flex-basis:19px}
+      .item span{font-size:12px}
+      footer{padding-top:6px;padding-bottom:calc(6px + env(safe-area-inset-bottom))}
+      button{padding:9px 12px;font-size:14px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <div class="title">Energy Call Checklist</div>
+        <div class="subtitle">Tap each item as you cover it</div>
+      </div>
+      <div class="progress" id="progress">0 / 18</div>
+    </header>
+
+    <main>
+      <div class="grid">
+        <section>
+          <h2>Customer</h2>
+          <label class="item"><input type="checkbox"><span>Owns home</span></label>
+          <label class="item"><input type="checkbox"><span>Decision maker</span></label>
+        </section>
+
+        <section>
+          <h2>Electrical</h2>
+          <label class="item"><input type="checkbox"><span>1Ø / 3Ø</span></label>
+          <label class="item"><input type="checkbox"><span>Switchboard</span></label>
+          <label class="item"><input type="checkbox"><span>Major loads</span></label>
+        </section>
+
+        <section>
+          <h2>Usage</h2>
+          <label class="item"><input type="checkbox"><span>Bill</span></label>
+          <label class="item"><input type="checkbox"><span>Day / Night</span></label>
+        </section>
+
+        <section>
+          <h2>Solar</h2>
+          <label class="item"><input type="checkbox"><span>Existing PV</span></label>
+          <label class="item"><input type="checkbox"><span>Inverter</span></label>
+          <label class="item"><input type="checkbox"><span>Required PV</span></label>
+          <label class="item"><input type="checkbox"><span>Roof</span></label>
+          <label class="item"><input type="checkbox"><span>Shade</span></label>
+        </section>
+
+        <section>
+          <h2>Battery</h2>
+          <label class="item"><input type="checkbox"><span>Required</span></label>
+          <label class="item"><input type="checkbox"><span>Size</span></label>
+          <label class="item"><input type="checkbox"><span>Backup</span></label>
+          <label class="item"><input type="checkbox"><span>Location</span></label>
+        </section>
+
+        <section>
+          <h2>Future</h2>
+          <label class="item"><input type="checkbox"><span>EV / Pool / Extension</span></label>
+        </section>
+
+        <section>
+          <h2>Next</h2>
+          <label class="item"><input type="checkbox"><span>Bill</span></label>
+          <label class="item"><input type="checkbox"><span>Switchboard photo</span></label>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <button class="clear-done" id="clearDone" type="button">Untick all</button>
+      <button class="reset" id="reset" type="button">New call</button>
+    </footer>
+  </div>
+
+  <script>
+    const boxes = [...document.querySelectorAll('input[type="checkbox"]')];
+    const progress = document.getElementById('progress');
+    const STORAGE_KEY = 'energy-call-checklist-v1';
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(boxes.map(b => b.checked)));
+    }
+
+    function render() {
+      let done = 0;
+      boxes.forEach(box => {
+        box.closest('.item').classList.toggle('done', box.checked);
+        if (box.checked) done++;
+      });
+      progress.textContent = `${done} / ${boxes.length}`;
+      save();
+    }
+
+    function resetAll() {
+      boxes.forEach(box => box.checked = false);
+      render();
+    }
+
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    boxes.forEach((box, i) => {
+      box.checked = Boolean(saved[i]);
+      box.addEventListener('change', render);
+    });
+
+    document.getElementById('clearDone').addEventListener('click', resetAll);
+    document.getElementById('reset').addEventListener('click', resetAll);
+
+    render();
+  </script>
+</body>
+</html>
